@@ -1,0 +1,43 @@
+Welcome to the Playtech internship test challenge! Please examine the following examples before beginning the challenge.
+
+Given a matrix of 4x4. Each cell contains a unique number [0-15], e.g.
+
+Fig 1.
+
+1  2  3  4
+5  6  7  8
+9 10 11 12
+13 14 15  0
+
+You are allowed to swap 0 with any of its (up to 4) adjacent numbers. From a given matrix, the goal is to reach the setup of Fig 1., e.g.
+Fig 2.
+
+1  2  3  4
+5  6  7  8
+9 10  0 12
+13 14 11 15
+
+I.e.:
+step 1) swap 11 and 0.
+step 2) swap 15 and 0
+
+Challenge:
+
+Write a Java program (command line) that accepts one parameter pointing to a directory with files having extension: "p15". Read files only with that extension, ignore others, if present. The files contain the setup explained above - numbers [0-15] separated by one or more spaces and a new line denoting the end of a matrix row, 4 rows in total.
+For each file with such extension, print to the standard output the name of a file and then the number of moves taken to reach the setup of Fig 1. (e.g. "case44.p15 - 12"). In case the file contains an invalid input or a setup that cannot reach Fig 1., print an error number to the standard error output, e.g. "case11.p15 - -1". Error numbers:
+-1 : The file contains a setup that cannot reach fig 1
+-2 : The file contains an invalid input (for example letters or numbers over 15, duplicate numbers, etc.)
+-3 : Unexpected error
+
+The provided program should not be using any 3rd party libraries, and must rely only on the classes available in JDK.
+Example files are included as attachments.
+
+
+Tips:
+* This 'game' has been known since mid/late 19th century as "Puzzle 15".
+* If the task is too challenging - try a 3x3 matrix with [0-8], first. 
+* You do not need to find the solution with the fewest number of moves to reach Fig 1. There is no scoring based on the result.
+* If you have questions, do write back.
+
+
+Have fun!
