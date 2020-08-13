@@ -80,7 +80,6 @@ public class Main {
     }
 
 
-
     public static void main(String[] args) throws IOException, Exception {
 
         // Check if command line argument is provided
@@ -100,7 +99,7 @@ public class Main {
                     if (matrixContentMeetsCriteria(matrix)) {
                         Puzzle15 puzzle = new Puzzle15(matrix);
 
-                        System.out.println(fileName + puzzle.solvePuzzle15());
+                        System.out.println(fileName + " - " + puzzle.solvePuzzle15());
                     }else{
                         System.out.println(fileName + "- -2");
                     }
