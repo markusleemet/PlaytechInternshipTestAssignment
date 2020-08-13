@@ -15,7 +15,6 @@ public class Puzzle15 {
     }
 
 
-
     void swapEmptyTileWith(TilePosition tileToSwapWith) {
         int tileToSwapWithValue = puzzleGameBoard.get(tileToSwapWith.yPosition).get(tileToSwapWith.xPosition);
 
@@ -30,6 +29,7 @@ public class Puzzle15 {
 
     /**
      * Locate specified tile on the game board
+     *
      * @param tileToLocate
      * @return tileToLocate position on game board
      */
@@ -66,7 +66,6 @@ public class Puzzle15 {
     }
 
 
-
     boolean pathUsesTilesThatItMustAvoid(List<TilePosition> path, List<TilePosition> tilesToAvoid) {
         for (TilePosition step : path) {
             if (tilesToAvoid.contains(step)) {
@@ -76,7 +75,7 @@ public class Puzzle15 {
         return false;
     }
 
-    void moveTileToPosition(int tileToMove, TilePosition endPosition){
+    void moveTileToPosition(int tileToMove, TilePosition endPosition) {
         TilePosition tileCurrentPosition = locateTilePosition(tileToMove);
         List<TilePosition> path = calculatePathForTile(tileCurrentPosition, endPosition, true);
 
@@ -120,7 +119,7 @@ public class Puzzle15 {
 
                 if (currentPosition.xPosition > endPosition.xPosition) {
                     step.xPosition = currentPosition.xPosition - 1;
-                }else {
+                } else {
                     step.xPosition = currentPosition.xPosition + 1;
                 }
                 pathForTile.add(step);
@@ -129,15 +128,14 @@ public class Puzzle15 {
         }
 
 
-
         System.out.println("Path -> " + pathForTile);
         return pathForTile;
     }
 
 
-
     /**
      * Solve puzzle
+     *
      * @return number of turns in which puzzle was solved
      */
     int solvePuzzle15() {
@@ -147,8 +145,6 @@ public class Puzzle15 {
         TilePosition tile1endPosition = new TilePosition(0, 0);
 
         moveTileToPosition(1, tile1endPosition);
-
-
 
 
         return new Random().nextInt(10);
