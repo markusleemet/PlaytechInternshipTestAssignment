@@ -24,4 +24,9 @@ public class TilePosition {
     public void setyPosition(int yPosition) {
         this.yPosition = yPosition;
     }
+
+    @Override
+    public String toString() {
+        return "[" + xPosition + ", " + yPosition + "]";
+    }
 }
