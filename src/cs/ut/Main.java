@@ -48,6 +48,34 @@ public class Main {
         return matrix;
     }
 
+
+    /**
+     * There are 2 things that need checking:
+     * Each number can occur only once
+     * Each number must be greater or equivalent to 0 and lesser or equivalent to 15
+     * @param matrix that is checked for those criteria
+     * @return if matrix meets these criteria or not
+     */
+    static boolean matrixContentMeetsCriteria(List<List<Integer>> matrix) {
+        List<Integer> alreadyCheckedElements = new ArrayList<>();
+
+        for (List<Integer> matrixRow : matrix) {
+            for (Integer matrixElement : matrixRow) {
+                if (matrixElement >= 0 && matrixElement <= 15) {
+                    if (!alreadyCheckedElements.contains(matrixElement)) {
+                        alreadyCheckedElements.add(matrixElement);
+                    }else {
+                        return false;
+                    }
+                }else{
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public static void main(String[] args) throws IOException, Exception {
 
         // Check if command line argument is provided
@@ -59,7 +87,17 @@ public class Main {
 
                 for (String path : filesPathsInProvidedDirectory) {
                     File file = new File(path);
+
+                    // FIle name for command line outputs
+                    String fileName = file.getName();
+
                     List<List<Integer>> matrix = createMatrixFromFile(file);
+                    if (matrixContentMeetsCriteria(matrix)) {
+                        System.out.println(fileName + "random number");
+                    }else{
+                        System.out.println(fileName + "- -2");
+                    }
+
                     System.out.println(matrix);
                 }
             } catch (IOException exception) {
