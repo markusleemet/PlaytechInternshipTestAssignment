@@ -10,8 +10,14 @@ import java.util.stream.Stream;
 
 public class Main {
 
-    static List<List<Integer>> createMatrixFromFile(File file) throws Exception{
-        String fileName = file.getName();
+    /**
+     * Create matrix from file content or throw error in case of incorrect input
+     * @param file which content is used to create matrix
+     * @param fileName that is used in case of error
+     * @return List<List<Integer>> (matrix)
+     * @throws Exception
+     */
+    static List<List<Integer>> createMatrixFromFile(File file, String fileName) throws Exception{
 
         // Create empty matrix that will be populated with numbers later on
         List<List<Integer>> matrix = new ArrayList<>();
@@ -42,7 +48,6 @@ public class Main {
         }catch (FileNotFoundException exception){
             throw new Exception(fileName + "- -3");
         }
-
         return matrix;
     }
 
@@ -88,10 +93,10 @@ public class Main {
                 for (String path : filesPathsInProvidedDirectory) {
                     File file = new File(path);
 
-                    // FIle name for command line outputs
+                    // File name for command line outputs
                     String fileName = file.getName();
 
-                    List<List<Integer>> matrix = createMatrixFromFile(file);
+                    List<List<Integer>> matrix = createMatrixFromFile(file, fileName);
                     if (matrixContentMeetsCriteria(matrix)) {
                         Puzzle15 puzzle = new Puzzle15(matrix);
 
@@ -99,8 +104,6 @@ public class Main {
                     }else{
                         System.out.println(fileName + "- -2");
                     }
-
-                    System.out.println(matrix);
                 }
             } catch (IOException exception) {
                 throw new Exception("-3");
