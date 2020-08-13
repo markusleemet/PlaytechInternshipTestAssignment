@@ -12,19 +12,6 @@ import java.util.stream.Stream;
 
 public class Main {
 
-    /**
-     * Method asks for user input and returns it as a String
-     * @return user input as a string
-     * @throws IOException
-     */
-    static String readUserInput() throws IOException {
-        InputStreamReader inputStreamReader = new InputStreamReader(System.in);
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-        return bufferedReader.readLine();
-    }
-
-
     static List<List<Integer>> createMatrixFromFile(File file) throws Exception{
         String fileName = file.getName();
 
