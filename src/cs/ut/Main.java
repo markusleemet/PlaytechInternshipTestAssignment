@@ -76,61 +76,6 @@ public class Main {
 
 
 
-    static int solvePuzzle15(List<List<Integer>> matrix) {
-        int movesCounter = 0;
-
-        // Locate empty tile position
-        Map<String, Integer> emptyTilePosition = locateEmptyTilePosition(matrix);
-        System.out.println(emptyTilePosition);
-
-
-
-
-        return new Random().nextInt(10);
-    }
-
-    static void swapTwoTiles(List<List<Integer>> matrix, SwapTile tileToSwap) {
-
-
-
-        switch (tileToSwap) {
-            case TOP -> {
-
-            }
-            case BOTTOM -> {
-
-            }
-            case LEFT -> {
-
-            }
-            case RIGHT -> {
-
-            }
-        }
-    }
-
-
-    /**
-     * Find empty tile (x, y) position in matrix
-     * @param matrix in which empty tile position is located
-     * @return empty tile (x, y) position as Map<String, Integer>
-     */
-    static Map<String, Integer> locateEmptyTilePosition(List<List<Integer>> matrix) {
-        Map<String, Integer> emptyTilePosition = new HashMap<>();
-        for (List<Integer> matrixRow : matrix) {
-            if (matrixRow.contains(0)) {
-                emptyTilePosition.put("y", matrix.indexOf(matrixRow));
-                for (Integer tile : matrixRow) {
-                    if (tile == 0) {
-                        emptyTilePosition.put("x", matrixRow.indexOf(tile));
-                    }
-                }
-            }
-        }
-        return emptyTilePosition;
-    }
-
-
     public static void main(String[] args) throws IOException, Exception {
 
         // Check if command line argument is provided
@@ -148,7 +93,9 @@ public class Main {
 
                     List<List<Integer>> matrix = createMatrixFromFile(file);
                     if (matrixContentMeetsCriteria(matrix)) {
-                        System.out.println(fileName + solvePuzzle15(matrix));
+                        Puzzle15 puzzle = new Puzzle15(matrix);
+
+                        System.out.println(fileName + puzzle.solvePuzzle15());
                     }else{
                         System.out.println(fileName + "- -2");
                     }
