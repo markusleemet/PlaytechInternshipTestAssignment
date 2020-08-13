@@ -11,42 +11,17 @@ public class Puzzle15 {
     public Puzzle15(List<List<Integer>> puzzleGameBoard) {
         this.puzzleGameBoard = puzzleGameBoard;
 
-        this.emptyTilePosition = locateEmptyTilePosition(0);
+        this.emptyTilePosition = locateTilePosition(0);
     }
 
-    /**
-     * Swap two tiles on game board
-     * @param tileToSwap shows in which direction empty tile must be moved
-     */
-    void swapTwoTiles(SwapTile tileToSwap) {
-        TilePosition emptyTileNewPosition = new TilePosition(0, 0);
 
-        switch (tileToSwap) {
-            case TOP -> {
-                emptyTileNewPosition.xPosition = emptyTilePosition.xPosition;
-                emptyTileNewPosition.yPosition = emptyTilePosition.yPosition - 1;
-            }
-            case BOTTOM -> {
-                emptyTileNewPosition.xPosition = emptyTilePosition.xPosition;
-                emptyTileNewPosition.yPosition = emptyTilePosition.yPosition + 1;
-            }
-            case LEFT -> {
-                emptyTileNewPosition.xPosition = emptyTilePosition.xPosition - 1;
-                emptyTileNewPosition.yPosition = emptyTilePosition.yPosition;
-            }
-            case RIGHT -> {
-                emptyTileNewPosition.xPosition = emptyTilePosition.xPosition + 1;
-                emptyTileNewPosition.yPosition = emptyTilePosition.yPosition;
-            }
-        }
-        int emptyTileNewPositionOldValue = puzzleGameBoard.get(emptyTileNewPosition.yPosition).get(emptyTileNewPosition.xPosition);
-        puzzleGameBoard.get(emptyTilePosition.yPosition).set(emptyTilePosition.xPosition, emptyTileNewPositionOldValue);
-        puzzleGameBoard.get(emptyTileNewPosition.yPosition).set(emptyTileNewPosition.xPosition, emptyTile);
 
-        emptyTilePosition.xPosition = emptyTileNewPosition.xPosition;
-        emptyTilePosition.yPosition = emptyTileNewPosition.yPosition;
+    void swapEmptyTileWith(TilePosition tileToSwapWith) {
+        int tileToSwapWithValue = puzzleGameBoard.get(tileToSwapWith.yPosition).get(tileToSwapWith.xPosition);
 
-        // Increase moves counter
+        puzzleGameBoard.get(this.emptyTilePosition.yPosition).set(this.emptyTilePosition.xPosition, tileToSwapWithValue);
+        puzzleGameBoard.get(tileToSwapWith.yPosition).set(tileToSwapWith.xPosition, emptyTile);
+        this.emptyTilePosition = tileToSwapWith;
         this.movesCounter++;
 
         printOutCurrentState();
@@ -58,7 +33,7 @@ public class Puzzle15 {
      * @param tileToLocate
      * @return tileToLocate position on game board
      */
-    TilePosition locateEmptyTilePosition(int tileToLocate) {
+    TilePosition locateTilePosition(int tileToLocate) {
         int tileXPosition = 0;
         int tileYPosition = 0;
 
@@ -92,36 +67,70 @@ public class Puzzle15 {
 
 
 
+    boolean pathUsesTilesThatItMustAvoid(List<TilePosition> path, List<TilePosition> tilesToAvoid) {
+        for (TilePosition step : path) {
+            if (tilesToAvoid.contains(step)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     void moveTileToPosition(int tileToMove, TilePosition endPosition){
-        TilePosition tileCurrentPosition = locateEmptyTilePosition(tileToMove);
+        TilePosition tileCurrentPosition = locateTilePosition(tileToMove);
+        List<TilePosition> path = calculatePathForTile(tileCurrentPosition, endPosition, true);
 
+
+        List<TilePosition> tilesToAvoid = new ArrayList<>();
+        tilesToAvoid.add(tileCurrentPosition);
+        for (TilePosition step : path) {
+            moveEmptyTileToPosition(step, tilesToAvoid);
+            swapEmptyTileWith(tileCurrentPosition);
+            tileCurrentPosition = step;
+        }
+        System.out.println(path);
+    }
+
+    void moveEmptyTileToPosition(TilePosition targetPosition, List<TilePosition> tilesToAvoid) {
+        List<TilePosition> path = calculatePathForTile(this.emptyTilePosition, targetPosition, true);
+
+        if (pathUsesTilesThatItMustAvoid(path, tilesToAvoid)) {
+            path = calculatePathForTile(this.emptyTilePosition, targetPosition, false);
+        }
+
+        for (TilePosition step : path) {
+            swapEmptyTileWith(step);
+        }
     }
 
 
-    List<TilePosition> calculatePathForTile(TilePosition currentPosition, TilePosition endPosition) {
+    List<TilePosition> calculatePathForTile(TilePosition currentPosition, TilePosition endPosition, boolean yAxisBeforeXAxis) {
         List<TilePosition> pathForTile = new ArrayList<>();
 
 
-
-        while (currentPosition.yPosition != endPosition.yPosition) {
-            TilePosition step = new TilePosition(currentPosition.xPosition, currentPosition.yPosition - 1);
-            pathForTile.add(step);
-            currentPosition = step;
-        }
-
-        while (currentPosition.xPosition != endPosition.xPosition) {
-            TilePosition step = new TilePosition(0, currentPosition.yPosition);
-
-            if (currentPosition.xPosition > endPosition.xPosition) {
-                step.xPosition = currentPosition.xPosition + 1;
-            }else {
-                step.xPosition = currentPosition.xPosition - 1;
+        if (yAxisBeforeXAxis) {
+            while (currentPosition.yPosition != endPosition.yPosition) {
+                TilePosition step = new TilePosition(currentPosition.xPosition, currentPosition.yPosition - 1);
+                pathForTile.add(step);
+                currentPosition = step;
             }
-            pathForTile.add(step);
-            currentPosition = step;
+
+            while (currentPosition.xPosition != endPosition.xPosition) {
+                TilePosition step = new TilePosition(0, currentPosition.yPosition);
+
+                if (currentPosition.xPosition > endPosition.xPosition) {
+                    step.xPosition = currentPosition.xPosition - 1;
+                }else {
+                    step.xPosition = currentPosition.xPosition + 1;
+                }
+                pathForTile.add(step);
+                currentPosition = step;
+            }
         }
 
+
+
+        System.out.println("Path -> " + pathForTile);
         return pathForTile;
     }
 
@@ -132,19 +141,15 @@ public class Puzzle15 {
      * @return number of turns in which puzzle was solved
      */
     int solvePuzzle15() {
+        printOutCurrentState();
+
         // Move tile 1 to final position
         TilePosition tile1endPosition = new TilePosition(0, 0);
 
         moveTileToPosition(1, tile1endPosition);
 
 
-        printOutCurrentState();
 
-        swapTwoTiles(SwapTile.TOP);
-        swapTwoTiles(SwapTile.LEFT);
-        swapTwoTiles(SwapTile.LEFT);
-        swapTwoTiles(SwapTile.LEFT);
-        swapTwoTiles(SwapTile.BOTTOM);
 
         return new Random().nextInt(10);
     }
