@@ -4,9 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -76,6 +74,63 @@ public class Main {
         return true;
     }
 
+
+
+    static int solvePuzzle15(List<List<Integer>> matrix) {
+        int movesCounter = 0;
+
+        // Locate empty tile position
+        Map<String, Integer> emptyTilePosition = locateEmptyTilePosition(matrix);
+        System.out.println(emptyTilePosition);
+
+
+
+
+        return new Random().nextInt(10);
+    }
+
+    static void swapTwoTiles(List<List<Integer>> matrix, SwapTile tileToSwap) {
+
+
+
+        switch (tileToSwap) {
+            case TOP -> {
+
+            }
+            case BOTTOM -> {
+
+            }
+            case LEFT -> {
+
+            }
+            case RIGHT -> {
+
+            }
+        }
+    }
+
+
+    /**
+     * Find empty tile (x, y) position in matrix
+     * @param matrix in which empty tile position is located
+     * @return empty tile (x, y) position as Map<String, Integer>
+     */
+    static Map<String, Integer> locateEmptyTilePosition(List<List<Integer>> matrix) {
+        Map<String, Integer> emptyTilePosition = new HashMap<>();
+        for (List<Integer> matrixRow : matrix) {
+            if (matrixRow.contains(0)) {
+                emptyTilePosition.put("y", matrix.indexOf(matrixRow));
+                for (Integer tile : matrixRow) {
+                    if (tile == 0) {
+                        emptyTilePosition.put("x", matrixRow.indexOf(tile));
+                    }
+                }
+            }
+        }
+        return emptyTilePosition;
+    }
+
+
     public static void main(String[] args) throws IOException, Exception {
 
         // Check if command line argument is provided
@@ -93,7 +148,7 @@ public class Main {
 
                     List<List<Integer>> matrix = createMatrixFromFile(file);
                     if (matrixContentMeetsCriteria(matrix)) {
-                        System.out.println(fileName + "random number");
+                        System.out.println(fileName + solvePuzzle15(matrix));
                     }else{
                         System.out.println(fileName + "- -2");
                     }
