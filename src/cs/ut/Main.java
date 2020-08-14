@@ -16,7 +16,7 @@ public class Main {
     /**
      * Create matrix from file content or throw error in case of incorrect input
      *
-     * @param file     which content is used to create matrix
+     * @param file which content is used to create matrix
      * @param fileName that is used in case of error
      * @return List<List < Integer>> (matrix)
      * @throws Exception
