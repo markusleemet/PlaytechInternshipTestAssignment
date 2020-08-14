@@ -1,5 +1,7 @@
 package cs.ut;
 
+import cs.ut.exception.ImpossiblePuzzleSetupException;
+
 import java.util.*;
 
 public class Puzzle15 {
@@ -15,8 +17,8 @@ public class Puzzle15 {
 
     public Puzzle15(List<List<Integer>> puzzleGameBoard) {
         this.puzzleGameBoard = puzzleGameBoard;
-
         this.emptyTilePosition = locateTilePosition(0);
+        checkIfPuzzleIsSolvable();
     }
 
 
@@ -229,6 +231,47 @@ public class Puzzle15 {
 
 
     /**
+     * This method is based on:
+     * https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
+     */
+    void checkIfPuzzleIsSolvable() {
+        int totalInversion = 0;
+
+        // Make list out of matrix to check inversions more easily
+        List<Integer> supportListToCheckInversions = new ArrayList<>(Arrays.asList());
+        for (List<Integer> matrixRow : puzzleGameBoard) {
+            supportListToCheckInversions.addAll(matrixRow);
+        }
+
+        // Calculate inversions
+        for (int firstTileIndex = 0; firstTileIndex <= 14; firstTileIndex++) {
+            for (int secondTileIndex = firstTileIndex + 1; secondTileIndex <= 15; secondTileIndex++) {
+                if (supportListToCheckInversions.get(secondTileIndex) != 0) {
+                    if (supportListToCheckInversions.get(firstTileIndex) > supportListToCheckInversions.get(secondTileIndex)) {
+                        totalInversion++;
+                    }
+                }
+            }
+        }
+
+        // Empty tile row is even
+        boolean emptyTileRowIsEven = emptyTilePosition.yPosition % 2 == 0;
+
+
+        // Following formula shows if puzzle is solvable or not
+        if (emptyTileRowIsEven) {
+            if (totalInversion % 2 == 0) {
+                throw new ImpossiblePuzzleSetupException();
+            }
+        } else {
+            if (totalInversion % 2 != 0) {
+                throw new ImpossiblePuzzleSetupException();
+            }
+        }
+    }
+
+
+    /**
      * Solve puzzle
      *
      * @return number of turns in which puzzle was solved
@@ -293,8 +336,6 @@ public class Puzzle15 {
         moveTileToPosition(11, getTileFinalPosition(11), true);
         moveTileToPosition(12, getTileFinalPosition(12), true);
         moveTileToPosition(15, getTileFinalPosition(15), true);
-
-
 
 
         return new Random().nextInt(10);

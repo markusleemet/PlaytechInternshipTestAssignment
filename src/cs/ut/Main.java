@@ -106,11 +106,11 @@ public class Main {
                         Puzzle15 puzzle = new Puzzle15(matrix);
                         System.out.println(fileName + " - " + puzzle.solvePuzzle15());
                     } catch (InvalidPuzzleInput invalidPuzzleInput) {
-                        System.err.println(invalidPuzzleInput.getMessage() + " - " + "-2");
+                        System.err.println(fileName + " - " + "-2");
                     } catch (IOException ioException) {
-                        System.err.println(ioException.getMessage() + " - " + "-3");
+                        System.err.println(fileName + " - " + "-3");
                     } catch (ImpossiblePuzzleSetupException impossiblePuzzleSetupException) {
-                        System.err.println(impossiblePuzzleSetupException.getMessage() + " - " + "-1");
+                        System.err.println(fileName + " - " + "-1");
                     }
                 }
 
