@@ -3,11 +3,15 @@ package cs.ut;
 import cs.ut.exception.ImpossiblePuzzleSetupException;
 import cs.ut.exception.InvalidPuzzleInput;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,12 +20,11 @@ public class Main {
     /**
      * Create matrix from file content or throw error in case of incorrect input.
      *
-     * @param file     which content is used to create matrix.
-     * @param fileName that is used in case of error.
+     * @param file which content is used to create matrix.
      * @return List<List < Integer>> that represents matrix.
      * @throws Exception
      */
-    static List<List<Integer>> createMatrixFromFile(File file, String fileName) throws FileNotFoundException, InvalidPuzzleInput {
+    static List<List<Integer>> createMatrixFromFile(File file) throws FileNotFoundException, InvalidPuzzleInput {
 
         // Create empty matrix that will be populated with numbers later on
         List<List<Integer>> matrix = new ArrayList<>();
@@ -42,7 +45,7 @@ public class Main {
                         int actualNumber = Integer.parseInt(stringRepresentationOfNumber);
                         matrixRow.add(actualNumber);
                     } catch (NumberFormatException exception) {
-                        throw new InvalidPuzzleInput(fileName);
+                        throw new InvalidPuzzleInput();
                     }
                 }
 
@@ -50,7 +53,7 @@ public class Main {
                 matrix.add(matrixRow);
             }
         } catch (FileNotFoundException fileNotFoundException) {
-            throw new FileNotFoundException(fileName);
+            throw new FileNotFoundException();
         }
         return matrix;
     }
@@ -60,11 +63,11 @@ public class Main {
      * There are 2 things that need checking:
      * Each number can occur only once
      * Each number must be greater or equivalent to 0 and lesser or equivalent to 15
+     * Method throws InvalidPuzzleInput exception if puzzle is not valid
      *
      * @param matrix that is checked for those criteria
-     * @return if matrix meets these criteria or not
      */
-    static boolean matrixContentMeetsCriteria(List<List<Integer>> matrix, String fileName) throws InvalidPuzzleInput {
+    static void matrixContentMeetsCriteria(List<List<Integer>> matrix) throws InvalidPuzzleInput {
         List<Integer> alreadyCheckedElements = new ArrayList<>();
 
         for (List<Integer> matrixRow : matrix) {
@@ -73,15 +76,13 @@ public class Main {
                     if (!alreadyCheckedElements.contains(matrixElement)) {
                         alreadyCheckedElements.add(matrixElement);
                     } else {
-                        throw new InvalidPuzzleInput(fileName);
+                        throw new InvalidPuzzleInput();
                     }
                 } else {
-                    throw new InvalidPuzzleInput(fileName);
+                    throw new InvalidPuzzleInput();
                 }
             }
         }
-
-        return true;
     }
 
 
@@ -92,17 +93,15 @@ public class Main {
             try (Stream<Path> paths = Files.walk(Paths.get(args[0]))) {
                 List<String> filesPathsInProvidedDirectory = paths.filter(path -> path.getFileName().toString().endsWith(".p15")).map(path -> path.toString()).collect(Collectors.toList());
 
-
                 for (String path : filesPathsInProvidedDirectory) {
                     File file = new File(path);
 
                     // File name for command line outputs
                     String fileName = file.getName();
 
-
                     try {
-                        List<List<Integer>> matrix = createMatrixFromFile(file, fileName);
-                        matrixContentMeetsCriteria(matrix, fileName);
+                        List<List<Integer>> matrix = createMatrixFromFile(file);
+                        matrixContentMeetsCriteria(matrix);
 
                         Puzzle15 puzzle = new Puzzle15(matrix);
                         int turnsToSolvePuzzle = puzzle.solvePuzzle15();

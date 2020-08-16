@@ -7,43 +7,9 @@ import java.util.*;
 public class Puzzle15 {
     private List<List<Integer>> puzzleGameBoard;
     private TilePosition emptyTilePosition;
-    private final int emptyTile = 0;
     private int movesCounter = 0;
+    private boolean solveWithAdditionalOutput = false;
     private Set<Integer> tilesToAvoid = new HashSet<>();
-    private List<TilePosition> pathThatIsBeingExecuted = new ArrayList<>();
-    private int tileThatIsBeingMoved = 0;
-    private TilePosition tileThatIsBeingMovedFinalPosition = new TilePosition(0, 0);
-
-
-    /**
-     * Method swaps empty tile with random adjacent tile
-     * It doest swap with tiles that are already in their final position
-     */
-    void moveEmptyTileRandomly() {
-        System.out.println("Swap empty tile randomly");
-        List<TilePosition> possibleMoves = new ArrayList<>();
-
-        TilePosition moveUp = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition - 1);
-        TilePosition moveDown = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition + 1);
-        TilePosition moveLeft = new TilePosition(this.emptyTilePosition.xPosition - 1, this.emptyTilePosition.yPosition);
-        TilePosition moveRight = new TilePosition(this.emptyTilePosition.xPosition + 1, this.emptyTilePosition.yPosition);
-
-        List<TilePosition> allMoves = new ArrayList<>(Arrays.asList(moveUp, moveDown, moveLeft, moveRight));
-
-
-        for (TilePosition move : allMoves) {
-            if (move.xPosition >= 0 && move.xPosition <= 3) {
-                if (move.yPosition >= 0 && move.yPosition <= 3) {
-                    int moveValue = this.puzzleGameBoard.get(move.yPosition).get(move.xPosition);
-                    if (!tilesToAvoid.contains(moveValue)) {
-                        possibleMoves.add(move);
-                    }
-                }
-            }
-        }
-
-        swapEmptyTileWith(possibleMoves.get(new Random().nextInt(possibleMoves.size())));
-    }
 
 
     /**
@@ -61,6 +27,34 @@ public class Puzzle15 {
 
 
     /**
+     * Method swaps empty tile with random adjacent tile.
+     * It doest swap with tiles that are already in their final position.
+     */
+    void moveEmptyTileRandomly() {
+        List<TilePosition> possibleMoves = new ArrayList<>();
+
+        TilePosition moveUp = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition - 1);
+        TilePosition moveDown = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition + 1);
+        TilePosition moveLeft = new TilePosition(this.emptyTilePosition.xPosition - 1, this.emptyTilePosition.yPosition);
+        TilePosition moveRight = new TilePosition(this.emptyTilePosition.xPosition + 1, this.emptyTilePosition.yPosition);
+        List<TilePosition> allMoves = new ArrayList<>(Arrays.asList(moveUp, moveDown, moveLeft, moveRight));
+
+        for (TilePosition move : allMoves) {
+            if (move.xPosition >= 0 && move.xPosition <= 3) {
+                if (move.yPosition >= 0 && move.yPosition <= 3) {
+                    int moveValue = this.puzzleGameBoard.get(move.yPosition).get(move.xPosition);
+                    if (!tilesToAvoid.contains(moveValue)) {
+                        possibleMoves.add(move);
+                    }
+                }
+            }
+        }
+
+        swapEmptyTileWith(possibleMoves.get(new Random().nextInt(possibleMoves.size())));
+    }
+
+
+    /**
      * Method will swap any given tile with empty tile and increase turn counter by one.
      *
      * @param tileToSwapWith - tiles position that will be swapped wih empty tile. Must be adjacent to empty tile.
@@ -69,16 +63,18 @@ public class Puzzle15 {
         int tileToSwapWithValue = puzzleGameBoard.get(tileToSwapWith.yPosition).get(tileToSwapWith.xPosition);
 
         puzzleGameBoard.get(this.emptyTilePosition.yPosition).set(this.emptyTilePosition.xPosition, tileToSwapWithValue);
-        puzzleGameBoard.get(tileToSwapWith.yPosition).set(tileToSwapWith.xPosition, emptyTile);
+        puzzleGameBoard.get(tileToSwapWith.yPosition).set(tileToSwapWith.xPosition, 0);
         this.emptyTilePosition = tileToSwapWith;
         this.movesCounter++;
 
-        printOutCurrentState();
+        if (solveWithAdditionalOutput) {
+            printOutCurrentState();
+        }
     }
 
 
     /**
-     * Locate specified tile on the game board
+     * Locate specified tile on the game board.
      *
      * @param tileToLocate value of the tile to be located
      * @return TilePosition instance that points to specified tile
@@ -106,9 +102,6 @@ public class Puzzle15 {
     void printOutCurrentState() {
         System.out.println("--------------------------------");
         System.out.println("Moves counter: " + this.movesCounter);
-        System.out.println("Tiles to avoid: " + this.tilesToAvoid);
-        System.out.println("Path that is being executed: " + this.pathThatIsBeingExecuted);
-        System.out.println("Tile that is being moved: " + this.tileThatIsBeingMoved);
         for (List<Integer> matrixRow : puzzleGameBoard) {
             System.out.println(matrixRow);
         }
@@ -121,7 +114,7 @@ public class Puzzle15 {
      * Some tiles must be avoided because they are already at their final position.
      *
      * @param path that is checked
-     * @return
+     * @return true if path uses tiles that it must avoid
      */
     boolean pathUsesTilesThatItMustAvoid(List<TilePosition> path) {
         for (TilePosition step : path) {
@@ -146,12 +139,6 @@ public class Puzzle15 {
 
         tilesToAvoid.add(tileToMove);
 
-        pathThatIsBeingExecuted = path;
-        tileThatIsBeingMoved = tileToMove;
-        tileThatIsBeingMovedFinalPosition = endPosition;
-
-        System.out.println("Tile: " + tileToMove + " path: " + path);
-
         for (TilePosition step : path) {
             moveEmptyTileToPosition(step);
             swapEmptyTileWith(tileCurrentPosition);
@@ -168,16 +155,16 @@ public class Puzzle15 {
     void moveEmptyTileToPosition(TilePosition targetPosition) {
         List<TilePosition> path = calculatePathForTile(this.emptyTilePosition, targetPosition);
 
+        // If no valid path was generated, move randomly and try again
         while (path == null) {
             moveEmptyTileRandomly();
             path = calculatePathForTile(this.emptyTilePosition, targetPosition);
         }
 
-        System.out.println("Empty tile new path: " + path);
+        // Execute generated path
         for (TilePosition step : path) {
             swapEmptyTileWith(step);
         }
-
     }
 
 
@@ -189,16 +176,18 @@ public class Puzzle15 {
      * @return list of TilePosition instances that represent path.
      */
     List<TilePosition> calculatePathForTile(TilePosition startingPosition, TilePosition endPosition) {
-        System.out.println("Calculate new path for tile: " + puzzleGameBoard.get(startingPosition.yPosition).get(startingPosition.xPosition));
-
         for (boolean booleanValue : Arrays.asList(true, false)) {
             List<TilePosition> path = new ArrayList<>();
             TilePosition currentPosition = startingPosition;
+
+            // Generate steps until current position and final position are equal
             while (currentPosition.xPosition != endPosition.xPosition || currentPosition.yPosition != endPosition.yPosition) {
                 currentPosition = getNextStepInPath(currentPosition, endPosition, booleanValue);
                 path.add(currentPosition);
             }
 
+            // Check if generated path uses tiles that it must avoid
+            // If true, new path is generated
             if (pathUsesTilesThatItMustAvoid(path)) {
                 continue;
             }
@@ -297,8 +286,6 @@ public class Puzzle15 {
      * @return number of turns it took to solve the puzzle
      */
     int solvePuzzle15() {
-        printOutCurrentState();
-
         // Move following tiles to final position
         moveTileToPosition(1, getTileFinalPosition(1));
         moveTileToPosition(2, getTileFinalPosition(2));
@@ -316,7 +303,6 @@ public class Puzzle15 {
         // Move following tiles to final position
         moveTileToPosition(5, getTileFinalPosition(5));
         moveTileToPosition(6, getTileFinalPosition(6));
-
 
         // Move following tiles to SETUP position
         moveTileToPosition(7, getTileFinalPosition(9));
@@ -337,7 +323,6 @@ public class Puzzle15 {
         // Move following tiles to final position
         moveTileToPosition(13, getTileFinalPosition(13));
         moveTileToPosition(9, getTileFinalPosition(9));
-
 
         // Move following tiles to SETUP position
         moveTileToPosition(10, getTileFinalPosition(12));
