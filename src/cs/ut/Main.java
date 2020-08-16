@@ -14,11 +14,11 @@ import java.util.stream.Stream;
 public class Main {
 
     /**
-     * Create matrix from file content or throw error in case of incorrect input
+     * Create matrix from file content or throw error in case of incorrect input.
      *
-     * @param file which content is used to create matrix
-     * @param fileName that is used in case of error
-     * @return List<List < Integer>> (matrix)
+     * @param file     which content is used to create matrix.
+     * @param fileName that is used in case of error.
+     * @return List<List < Integer>> that represents matrix.
      * @throws Exception
      */
     static List<List<Integer>> createMatrixFromFile(File file, String fileName) throws FileNotFoundException, InvalidPuzzleInput {
@@ -103,14 +103,17 @@ public class Main {
                     try {
                         List<List<Integer>> matrix = createMatrixFromFile(file, fileName);
                         matrixContentMeetsCriteria(matrix, fileName);
+
                         Puzzle15 puzzle = new Puzzle15(matrix);
-                        System.out.println(fileName + " - " + puzzle.solvePuzzle15());
-                    } catch (InvalidPuzzleInput invalidPuzzleInput) {
-                        System.err.println(fileName + " - " + "-2");
-                    } catch (IOException ioException) {
-                        System.err.println(fileName + " - " + "-3");
+                        int turnsToSolvePuzzle = puzzle.solvePuzzle15();
+                        System.out.println(fileName + " - " + turnsToSolvePuzzle);
+
                     } catch (ImpossiblePuzzleSetupException impossiblePuzzleSetupException) {
                         System.err.println(fileName + " - " + "-1");
+                    } catch (InvalidPuzzleInput invalidPuzzleInput) {
+                        System.err.println(fileName + " - " + "-2");
+                    } catch (IOException | RuntimeException exception) {
+                        System.err.println(fileName + " - " + "-3");
                     }
                 }
 

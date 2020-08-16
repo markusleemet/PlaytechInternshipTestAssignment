@@ -5,7 +5,7 @@ import cs.ut.exception.ImpossiblePuzzleSetupException;
 import java.util.*;
 
 public class Puzzle15 {
-    List<List<Integer>> puzzleGameBoard;
+    private List<List<Integer>> puzzleGameBoard;
     private TilePosition emptyTilePosition;
     private final int emptyTile = 0;
     private int movesCounter = 0;
@@ -15,129 +15,12 @@ public class Puzzle15 {
     private TilePosition tileThatIsBeingMovedFinalPosition = new TilePosition(0, 0);
 
 
-    public Puzzle15(List<List<Integer>> puzzleGameBoard) {
-        this.puzzleGameBoard = puzzleGameBoard;
-        this.emptyTilePosition = locateTilePosition(0);
-        checkIfPuzzleIsSolvable();
-    }
-
-
-    void swapEmptyTileWith(TilePosition tileToSwapWith) {
-        int tileToSwapWithValue = puzzleGameBoard.get(tileToSwapWith.yPosition).get(tileToSwapWith.xPosition);
-
-        puzzleGameBoard.get(this.emptyTilePosition.yPosition).set(this.emptyTilePosition.xPosition, tileToSwapWithValue);
-        puzzleGameBoard.get(tileToSwapWith.yPosition).set(tileToSwapWith.xPosition, emptyTile);
-        this.emptyTilePosition = tileToSwapWith;
-        this.movesCounter++;
-
-        printOutCurrentState();
-    }
-
-
     /**
-     * Locate specified tile on the game board
-     *
-     * @param tileToLocate
-     * @return tileToLocate position on game board
+     * Method swaps empty tile with random adjacent tile
+     * It doest swap with tiles that are already in their final position
      */
-    TilePosition locateTilePosition(int tileToLocate) {
-        int tileXPosition = 0;
-        int tileYPosition = 0;
-
-        for (List<Integer> matrixRow : puzzleGameBoard) {
-            if (matrixRow.contains(tileToLocate)) {
-                tileYPosition = puzzleGameBoard.indexOf(matrixRow);
-                for (Integer tile : matrixRow) {
-                    if (tile == tileToLocate) {
-                        tileXPosition = matrixRow.indexOf(tile);
-                    }
-                }
-            }
-        }
-
-        return new TilePosition(tileXPosition, tileYPosition);
-    }
-
-
-    /**
-     * Print out puzzle current state to command line
-     */
-    void printOutCurrentState() {
-        System.out.println("--------------------------------");
-        System.out.println("Moves counter: " + this.movesCounter);
-        System.out.println("Empty tile position: " + this.emptyTilePosition);
-        System.out.println("Tiles to avoid: " + this.tilesToAvoid);
-        System.out.println("Path that is being executed: " + this.pathThatIsBeingExecuted);
-        System.out.println("Tile that is being moved: " + this.tileThatIsBeingMoved);
-        System.out.println("Tile that is being moved final position: " + this.tileThatIsBeingMovedFinalPosition);
-        for (List<Integer> matrixRow : puzzleGameBoard) {
-            System.out.println(matrixRow);
-        }
-        System.out.println("--------------------------------");
-    }
-
-
-    boolean pathUsesTilesThatItMustAvoid(List<TilePosition> path) {
-        for (TilePosition step : path) {
-            int tileValue = this.puzzleGameBoard.get(step.yPosition).get(step.xPosition);
-            if (tilesToAvoid.contains(tileValue)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void moveTileToPosition(int tileToMove, TilePosition endPosition, boolean yAxisBeforeXAxis) {
-        TilePosition tileCurrentPosition = locateTilePosition(tileToMove);
-        List<TilePosition> path = calculatePathForTile(tileCurrentPosition, endPosition, false);
-
-
-        if (pathUsesTilesThatItMustAvoid(path)) {
-            path = calculatePathForTile(tileCurrentPosition, endPosition, true);
-        }
-
-        tilesToAvoid.add(tileToMove);
-
-        pathThatIsBeingExecuted = path;
-        tileThatIsBeingMoved = tileToMove;
-        tileThatIsBeingMovedFinalPosition = endPosition;
-
-        System.out.println("Tile: " + tileToMove + " path: " + path);
-
-        for (TilePosition step : path) {
-            moveEmptyTileToPosition(step);
-            swapEmptyTileWith(tileCurrentPosition);
-            tileCurrentPosition = step;
-        }
-    }
-
-    void moveEmptyTileToPosition(TilePosition targetPosition) {
-        List<TilePosition> pathYBeforeX = calculatePathForTile(this.emptyTilePosition, targetPosition, true);
-        List<TilePosition> pathXBeforeY = calculatePathForTile(this.emptyTilePosition, targetPosition, false);
-
-
-        while (pathUsesTilesThatItMustAvoid(pathYBeforeX) && pathUsesTilesThatItMustAvoid(pathXBeforeY)) {
-            System.out.println("Make random move and calculate new path");
-            moveEmptyTileRandomly();
-            pathYBeforeX = calculatePathForTile(this.emptyTilePosition, targetPosition, true);
-            pathXBeforeY = calculatePathForTile(this.emptyTilePosition, targetPosition, false);
-        }
-
-        if (!pathUsesTilesThatItMustAvoid(pathYBeforeX)) {
-            System.out.println("Empty tile new path: " + pathYBeforeX);
-            for (TilePosition step : pathYBeforeX) {
-                swapEmptyTileWith(step);
-            }
-        } else {
-            System.out.println("Empty tile new path: " + pathXBeforeY);
-            for (TilePosition step : pathXBeforeY) {
-                swapEmptyTileWith(step);
-            }
-        }
-    }
-
-
     void moveEmptyTileRandomly() {
+        System.out.println("Swap empty tile randomly");
         List<TilePosition> possibleMoves = new ArrayList<>();
 
         TilePosition moveUp = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition - 1);
@@ -163,67 +46,203 @@ public class Puzzle15 {
     }
 
 
-    List<TilePosition> calculatePathForTile(TilePosition currentPosition, TilePosition endPosition, boolean yAxisBeforeXAxis) {
-        System.out.println("Calculate new path for tile: " + puzzleGameBoard.get(currentPosition.yPosition).get(currentPosition.xPosition) + " -> yAxisBeforeXAxis: " + yAxisBeforeXAxis);
-        List<TilePosition> pathForTile = new ArrayList<>();
-
-
-        if (yAxisBeforeXAxis) {
-            while (currentPosition.yPosition != endPosition.yPosition) {
-                TilePosition step = new TilePosition(currentPosition.xPosition, 0);
-
-                if (currentPosition.yPosition > endPosition.yPosition) {
-                    step.yPosition = currentPosition.yPosition - 1;
-                } else {
-                    step.yPosition = currentPosition.yPosition + 1;
-                }
-
-                pathForTile.add(step);
-                currentPosition = step;
-            }
-
-            while (currentPosition.xPosition != endPosition.xPosition) {
-                TilePosition step = new TilePosition(0, currentPosition.yPosition);
-
-                if (currentPosition.xPosition > endPosition.xPosition) {
-                    step.xPosition = currentPosition.xPosition - 1;
-                } else {
-                    step.xPosition = currentPosition.xPosition + 1;
-                }
-                pathForTile.add(step);
-                currentPosition = step;
-            }
-        } else {
-            while (currentPosition.xPosition != endPosition.xPosition) {
-                TilePosition step = new TilePosition(0, currentPosition.yPosition);
-
-                if (currentPosition.xPosition > endPosition.xPosition) {
-                    step.xPosition = currentPosition.xPosition - 1;
-                } else {
-                    step.xPosition = currentPosition.xPosition + 1;
-                }
-                pathForTile.add(step);
-                currentPosition = step;
-            }
-
-            while (currentPosition.yPosition != endPosition.yPosition) {
-                TilePosition step = new TilePosition(currentPosition.xPosition, 0);
-
-                if (currentPosition.yPosition > endPosition.yPosition) {
-                    step.yPosition = currentPosition.yPosition - 1;
-                } else {
-                    step.yPosition = currentPosition.yPosition + 1;
-                }
-
-                pathForTile.add(step);
-                currentPosition = step;
-            }
-        }
-
-        return pathForTile;
+    /**
+     * At the creation of the puzzle instance two actions must be done:
+     * 1. Locate empty tile position
+     * 2. Check if puzzle is solvable
+     *
+     * @param puzzleGameBoard
+     */
+    public Puzzle15(List<List<Integer>> puzzleGameBoard) {
+        this.puzzleGameBoard = puzzleGameBoard;
+        this.emptyTilePosition = locateTilePosition(0);
+        checkIfPuzzleIsSolvable();
     }
 
 
+    /**
+     * Method will swap any given tile with empty tile and increase turn counter by one.
+     *
+     * @param tileToSwapWith - tiles position that will be swapped wih empty tile. Must be adjacent to empty tile.
+     */
+    void swapEmptyTileWith(TilePosition tileToSwapWith) {
+        int tileToSwapWithValue = puzzleGameBoard.get(tileToSwapWith.yPosition).get(tileToSwapWith.xPosition);
+
+        puzzleGameBoard.get(this.emptyTilePosition.yPosition).set(this.emptyTilePosition.xPosition, tileToSwapWithValue);
+        puzzleGameBoard.get(tileToSwapWith.yPosition).set(tileToSwapWith.xPosition, emptyTile);
+        this.emptyTilePosition = tileToSwapWith;
+        this.movesCounter++;
+
+        printOutCurrentState();
+    }
+
+
+    /**
+     * Locate specified tile on the game board
+     *
+     * @param tileToLocate value of the tile to be located
+     * @return TilePosition instance that points to specified tile
+     */
+    TilePosition locateTilePosition(int tileToLocate) {
+        for (List<Integer> matrixRow : puzzleGameBoard) {
+            if (matrixRow.contains(tileToLocate)) {
+                int tileYPosition = puzzleGameBoard.indexOf(matrixRow);
+                for (Integer tile : matrixRow) {
+                    if (tile == tileToLocate) {
+                        int tileXPosition = matrixRow.indexOf(tile);
+                        return new TilePosition(tileXPosition, tileYPosition);
+                    }
+                }
+            }
+        }
+        // If tile wasn't found on game board throw runtime exception
+        throw new RuntimeException();
+    }
+
+
+    /**
+     * Print out puzzle current state to command line
+     */
+    void printOutCurrentState() {
+        System.out.println("--------------------------------");
+        System.out.println("Moves counter: " + this.movesCounter);
+        System.out.println("Tiles to avoid: " + this.tilesToAvoid);
+        System.out.println("Path that is being executed: " + this.pathThatIsBeingExecuted);
+        System.out.println("Tile that is being moved: " + this.tileThatIsBeingMoved);
+        for (List<Integer> matrixRow : puzzleGameBoard) {
+            System.out.println(matrixRow);
+        }
+        System.out.println("--------------------------------");
+    }
+
+
+    /**
+     * Method checks if specified path uses tiles that it must avoid.
+     * Some tiles must be avoided because they are already at their final position.
+     *
+     * @param path that is checked
+     * @return
+     */
+    boolean pathUsesTilesThatItMustAvoid(List<TilePosition> path) {
+        for (TilePosition step : path) {
+            int tileValue = this.puzzleGameBoard.get(step.yPosition).get(step.xPosition);
+            if (tilesToAvoid.contains(tileValue)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Method moves tile to any given position on game board.
+     *
+     * @param tileToMove  tile to move on game board to specified position.
+     * @param endPosition end position for tile to be moved.
+     */
+    void moveTileToPosition(int tileToMove, TilePosition endPosition) {
+        TilePosition tileCurrentPosition = locateTilePosition(tileToMove);
+        List<TilePosition> path = calculatePathForTile(tileCurrentPosition, endPosition);
+
+        tilesToAvoid.add(tileToMove);
+
+        pathThatIsBeingExecuted = path;
+        tileThatIsBeingMoved = tileToMove;
+        tileThatIsBeingMovedFinalPosition = endPosition;
+
+        System.out.println("Tile: " + tileToMove + " path: " + path);
+
+        for (TilePosition step : path) {
+            moveEmptyTileToPosition(step);
+            swapEmptyTileWith(tileCurrentPosition);
+            tileCurrentPosition = step;
+        }
+    }
+
+
+    /**
+     * Method moves empty tile to specified position.
+     *
+     * @param targetPosition position where to move empty tile.
+     */
+    void moveEmptyTileToPosition(TilePosition targetPosition) {
+        List<TilePosition> path = calculatePathForTile(this.emptyTilePosition, targetPosition);
+
+        while (path == null) {
+            moveEmptyTileRandomly();
+            path = calculatePathForTile(this.emptyTilePosition, targetPosition);
+        }
+
+        System.out.println("Empty tile new path: " + path);
+        for (TilePosition step : path) {
+            swapEmptyTileWith(step);
+        }
+
+    }
+
+
+    /**
+     * Calculates path between two locations so that the path avoids tiles that are already in their final location.
+     *
+     * @param startingPosition starting position of the path.
+     * @param endPosition      ending position of the path.
+     * @return list of TilePosition instances that represent path.
+     */
+    List<TilePosition> calculatePathForTile(TilePosition startingPosition, TilePosition endPosition) {
+        System.out.println("Calculate new path for tile: " + puzzleGameBoard.get(startingPosition.yPosition).get(startingPosition.xPosition));
+
+        for (boolean booleanValue : Arrays.asList(true, false)) {
+            List<TilePosition> path = new ArrayList<>();
+            TilePosition currentPosition = startingPosition;
+            while (currentPosition.xPosition != endPosition.xPosition || currentPosition.yPosition != endPosition.yPosition) {
+                currentPosition = getNextStepInPath(currentPosition, endPosition, booleanValue);
+                path.add(currentPosition);
+            }
+
+            if (pathUsesTilesThatItMustAvoid(path)) {
+                continue;
+            }
+            return path;
+        }
+        return null;
+    }
+
+
+    /**
+     * This is support method for calculatePathForTile() that returns first step in path between two locations on game board.
+     *
+     * @param currentPosition  starting position of the path to be generated.
+     * @param endPosition      end position of the path to be generated.
+     * @param yAxisBeforeXAxis indicates whether to move on y axis before x axis or vice versa.
+     * @return first step of the path between two positions as TilePosition instance.
+     */
+    TilePosition getNextStepInPath(TilePosition currentPosition, TilePosition endPosition, boolean yAxisBeforeXAxis) {
+        if (yAxisBeforeXAxis) {
+            if (currentPosition.yPosition != endPosition.yPosition) {
+                int newYPosition = (currentPosition.yPosition - endPosition.yPosition) > 0 ? currentPosition.yPosition - 1 : currentPosition.yPosition + 1;
+                return new TilePosition(currentPosition.xPosition, newYPosition);
+            } else {
+                int newXPosition = (currentPosition.xPosition - endPosition.xPosition) > 0 ? currentPosition.xPosition - 1 : currentPosition.xPosition + 1;
+                return new TilePosition(newXPosition, currentPosition.yPosition);
+            }
+        } else {
+            if (currentPosition.xPosition != endPosition.xPosition) {
+                int newXPosition = (currentPosition.xPosition - endPosition.xPosition) > 0 ? currentPosition.xPosition - 1 : currentPosition.xPosition + 1;
+                return new TilePosition(newXPosition, currentPosition.yPosition);
+            } else {
+                int newYPosition = (currentPosition.yPosition - endPosition.yPosition) > 0 ? currentPosition.yPosition - 1 : currentPosition.yPosition + 1;
+                return new TilePosition(currentPosition.xPosition, newYPosition);
+            }
+        }
+    }
+
+
+    /**
+     * This method returns specified tile position in solved puzzle
+     *
+     * @param tile its position in solved puzzle will be returned
+     * @return TileLocation instance
+     */
     TilePosition getTileFinalPosition(int tile) {
         int abstractTile = tile - 1;
         return new TilePosition((abstractTile % 4), abstractTile / 4);
@@ -238,7 +257,7 @@ public class Puzzle15 {
         int totalInversion = 0;
 
         // Make list out of matrix to check inversions more easily
-        List<Integer> supportListToCheckInversions = new ArrayList<>(Arrays.asList());
+        List<Integer> supportListToCheckInversions = new ArrayList<>();
         for (List<Integer> matrixRow : puzzleGameBoard) {
             supportListToCheckInversions.addAll(matrixRow);
         }
@@ -272,72 +291,69 @@ public class Puzzle15 {
 
 
     /**
-     * Solve puzzle
+     * This method solves puzzle based on following algorithm:
+     * https://www.instructables.com/id/How-To-Solve-The-15-Puzzle/
      *
-     * @return number of turns in which puzzle was solved
+     * @return number of turns it took to solve the puzzle
      */
     int solvePuzzle15() {
         printOutCurrentState();
 
+        // Move following tiles to final position
+        moveTileToPosition(1, getTileFinalPosition(1));
+        moveTileToPosition(2, getTileFinalPosition(2));
+
+        // Move following tiles to SETUP position
+        moveTileToPosition(3, getTileFinalPosition(5));
+        this.tilesToAvoid.remove(3);
+        moveTileToPosition(4, getTileFinalPosition(3));
+        moveTileToPosition(3, getTileFinalPosition(7));
 
         // Move following tiles to final position
-        moveTileToPosition(1, getTileFinalPosition(1), true);
-        moveTileToPosition(2, getTileFinalPosition(2), true);
+        moveTileToPosition(4, getTileFinalPosition(4));
+        moveTileToPosition(3, getTileFinalPosition(3));
+
+        // Move following tiles to final position
+        moveTileToPosition(5, getTileFinalPosition(5));
+        moveTileToPosition(6, getTileFinalPosition(6));
 
 
         // Move following tiles to SETUP position
-        // SETUP
-        moveTileToPosition(4, getTileFinalPosition(3), true);
-        moveTileToPosition(3, getTileFinalPosition(7), true);
+        moveTileToPosition(7, getTileFinalPosition(9));
+        this.tilesToAvoid.remove(7);
+        moveTileToPosition(8, getTileFinalPosition(7));
+        moveTileToPosition(7, getTileFinalPosition(11));
 
         // Move following tiles to final position
-        moveTileToPosition(4, getTileFinalPosition(4), true);
-        moveTileToPosition(3, getTileFinalPosition(3), true);
+        moveTileToPosition(8, getTileFinalPosition(8));
+        moveTileToPosition(7, getTileFinalPosition(7));
 
+        // Move following tiles to SETUP position
+        moveTileToPosition(9, getTileFinalPosition(12));
+        this.tilesToAvoid.remove(9);
+        moveTileToPosition(13, getTileFinalPosition(9));
+        moveTileToPosition(9, getTileFinalPosition(10));
 
         // Move following tiles to final position
-        moveTileToPosition(5, getTileFinalPosition(5), true);
-        moveTileToPosition(6, getTileFinalPosition(6), true);
+        moveTileToPosition(13, getTileFinalPosition(13));
+        moveTileToPosition(9, getTileFinalPosition(9));
 
 
         // Move following tiles to SETUP position
-        // SETUP
-        moveTileToPosition(8, getTileFinalPosition(7), true);
-        moveTileToPosition(7, getTileFinalPosition(11), true);
+        moveTileToPosition(10, getTileFinalPosition(12));
+        this.tilesToAvoid.remove(10);
+        moveTileToPosition(14, getTileFinalPosition(10));
+        moveTileToPosition(10, getTileFinalPosition(11));
 
         // Move following tiles to final position
-        moveTileToPosition(8, getTileFinalPosition(8), true);
-        moveTileToPosition(7, getTileFinalPosition(7), true);
-
-
-        // Move following tiles to SETUP position
-        // SETUP
-        moveTileToPosition(13, getTileFinalPosition(9), true);
-        moveTileToPosition(9, getTileFinalPosition(10), true);
-
+        moveTileToPosition(14, getTileFinalPosition(14));
+        moveTileToPosition(10, getTileFinalPosition(10));
 
         // Move following tiles to final position
-        moveTileToPosition(13, getTileFinalPosition(13), true);
-        moveTileToPosition(9, getTileFinalPosition(9), true);
+        moveTileToPosition(11, getTileFinalPosition(11));
+        moveTileToPosition(12, getTileFinalPosition(12));
+        moveTileToPosition(15, getTileFinalPosition(15));
 
-
-        // Move following tiles to SETUP position
-        // SETUP
-        moveTileToPosition(14, getTileFinalPosition(10), true);
-        moveTileToPosition(10, getTileFinalPosition(11), true);
-
-
-        // Move following tiles to final position
-        moveTileToPosition(14, getTileFinalPosition(14), true);
-        moveTileToPosition(10, getTileFinalPosition(10), true);
-
-
-        // Move following tiles to final position
-        moveTileToPosition(11, getTileFinalPosition(11), true);
-        moveTileToPosition(12, getTileFinalPosition(12), true);
-        moveTileToPosition(15, getTileFinalPosition(15), true);
-
-
-        return new Random().nextInt(10);
+        return this.movesCounter;
     }
 }
