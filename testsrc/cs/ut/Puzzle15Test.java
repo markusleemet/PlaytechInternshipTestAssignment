@@ -1,6 +1,6 @@
 package cs.ut;
 import cs.ut.exception.ImpossiblePuzzleSetupException;
-import cs.ut.exception.InvalidPuzzleInput;
+import cs.ut.exception.InvalidPuzzleInputException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +11,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Puzzle15Test {
+
+
+    /**
+     * Assert that puzzle that can't be solved throws ImpossiblePuzzleSetupException.
+     */
     @Test
     void testError1() {
         List<List<Integer>> matrix = new ArrayList<>();
@@ -23,16 +28,25 @@ public class Puzzle15Test {
                 () -> {new Puzzle15(matrix);});
     }
 
+
+    /**
+     * Assert that creating puzzle from file with invalid syntax throws InvalidPuzzleInputException.
+     */
     @Test
-    void testError2() throws FileNotFoundException {
+    void testError2() {
         File fileWithIncorrectSyntax = new File("assignment files/invalidSyntax.p15");
 
-        Assertions.assertThrows(InvalidPuzzleInput.class,
+        Assertions.assertThrows(InvalidPuzzleInputException.class,
                 () -> {Main.createMatrixFromFile(fileWithIncorrectSyntax);});
     }
 
+
+    /**
+     * Assert that solving puzzle returns positive integer or 0.
+     * @throws FileNotFoundException
+     */
     @Test
-    void testOutput() throws FileNotFoundException {
+    void testSolvePuzzleMethod() throws FileNotFoundException {
         File easyPuzzle = new File("assignment files/easy.p15");
 
         List<List<Integer>> matrix = Main.createMatrixFromFile(easyPuzzle);
@@ -40,10 +54,14 @@ public class Puzzle15Test {
 
         int turnsToSolvePuzzle = puzzle15.solvePuzzle15();
 
-        Assertions.assertTrue(turnsToSolvePuzzle > 0 && turnsToSolvePuzzle < 1000);
+        Assertions.assertTrue(turnsToSolvePuzzle >= 0);
     }
 
 
+    /**
+     * Assert that solving completed puzzle takes 0 turns.
+     * @throws FileNotFoundException
+     */
     @Test
     void testCompletedPuzzle() throws FileNotFoundException {
         File completedPuzzle = new File("assignment files/completed.p15");
@@ -53,7 +71,7 @@ public class Puzzle15Test {
 
         int turnsToSolvePuzzle = puzzle15.solvePuzzle15();
 
-        Assertions.assertTrue(turnsToSolvePuzzle == 1);
+        Assertions.assertTrue(turnsToSolvePuzzle == 0);
     }
 
 }

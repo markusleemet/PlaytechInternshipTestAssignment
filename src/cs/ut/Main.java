@@ -1,7 +1,7 @@
 package cs.ut;
 
 import cs.ut.exception.ImpossiblePuzzleSetupException;
-import cs.ut.exception.InvalidPuzzleInput;
+import cs.ut.exception.InvalidPuzzleInputException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,7 +24,7 @@ public class Main {
      * @return List<List < Integer>> that represents matrix.
      * @throws Exception
      */
-    static List<List<Integer>> createMatrixFromFile(File file) throws FileNotFoundException, InvalidPuzzleInput {
+    static List<List<Integer>> createMatrixFromFile(File file) throws FileNotFoundException, InvalidPuzzleInputException {
 
         // Create empty matrix that will be populated with numbers later on
         List<List<Integer>> matrix = new ArrayList<>();
@@ -45,7 +45,7 @@ public class Main {
                         int actualNumber = Integer.parseInt(stringRepresentationOfNumber);
                         matrixRow.add(actualNumber);
                     } catch (NumberFormatException exception) {
-                        throw new InvalidPuzzleInput();
+                        throw new InvalidPuzzleInputException();
                     }
                 }
 
@@ -67,7 +67,7 @@ public class Main {
      *
      * @param matrix that is checked for those criteria
      */
-    static void matrixContentMeetsCriteria(List<List<Integer>> matrix) throws InvalidPuzzleInput {
+    static void matrixContentMeetsCriteria(List<List<Integer>> matrix) throws InvalidPuzzleInputException {
         List<Integer> alreadyCheckedElements = new ArrayList<>();
 
         for (List<Integer> matrixRow : matrix) {
@@ -76,10 +76,10 @@ public class Main {
                     if (!alreadyCheckedElements.contains(matrixElement)) {
                         alreadyCheckedElements.add(matrixElement);
                     } else {
-                        throw new InvalidPuzzleInput();
+                        throw new InvalidPuzzleInputException();
                     }
                 } else {
-                    throw new InvalidPuzzleInput();
+                    throw new InvalidPuzzleInputException();
                 }
             }
         }
@@ -109,7 +109,7 @@ public class Main {
 
                     } catch (ImpossiblePuzzleSetupException impossiblePuzzleSetupException) {
                         System.err.println(fileName + " - " + "-1");
-                    } catch (InvalidPuzzleInput invalidPuzzleInput) {
+                    } catch (InvalidPuzzleInputException invalidPuzzleInputException) {
                         System.err.println(fileName + " - " + "-2");
                     } catch (IOException | RuntimeException exception) {
                         System.err.println(fileName + " - " + "-3");

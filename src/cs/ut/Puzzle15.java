@@ -9,7 +9,7 @@ public class Puzzle15 {
     private TilePosition emptyTilePosition;
     private int movesCounter = 0;
     private boolean solveWithAdditionalOutput = false;
-    private Set<Integer> tilesToAvoid = new HashSet<>();
+    private Set<Integer> tilesAtTheirFinalPosition = new HashSet<>();
 
 
     /**
@@ -23,6 +23,18 @@ public class Puzzle15 {
         this.puzzleGameBoard = puzzleGameBoard;
         this.emptyTilePosition = locateTilePosition(0);
         checkIfPuzzleIsSolvable();
+
+        // Add tiles that are already at their final position to tilesToAvoid.
+        // Starting from top left corner To this until first tile that is out of place.
+        for (int i = 1; i <= 15; i++) {
+            TilePosition tilePosition = locateTilePosition(i);
+            TilePosition tileFinalPosition = getTileFinalPosition(i);
+            if (tilePosition.equals(tileFinalPosition)) {
+                tilesAtTheirFinalPosition.add(i);
+            }else{
+                break;
+            }
+        }
     }
 
 
@@ -43,7 +55,7 @@ public class Puzzle15 {
             if (move.xPosition >= 0 && move.xPosition <= 3) {
                 if (move.yPosition >= 0 && move.yPosition <= 3) {
                     int moveValue = this.puzzleGameBoard.get(move.yPosition).get(move.xPosition);
-                    if (!tilesToAvoid.contains(moveValue)) {
+                    if (!tilesAtTheirFinalPosition.contains(moveValue)) {
                         possibleMoves.add(move);
                     }
                 }
@@ -119,7 +131,7 @@ public class Puzzle15 {
     boolean pathUsesTilesThatItMustAvoid(List<TilePosition> path) {
         for (TilePosition step : path) {
             int tileValue = this.puzzleGameBoard.get(step.yPosition).get(step.xPosition);
-            if (tilesToAvoid.contains(tileValue)) {
+            if (tilesAtTheirFinalPosition.contains(tileValue)) {
                 return true;
             }
         }
@@ -137,7 +149,7 @@ public class Puzzle15 {
         TilePosition tileCurrentPosition = locateTilePosition(tileToMove);
         List<TilePosition> path = calculatePathForTile(tileCurrentPosition, endPosition);
 
-        tilesToAvoid.add(tileToMove);
+        tilesAtTheirFinalPosition.add(tileToMove);
 
         for (TilePosition step : path) {
             moveEmptyTileToPosition(step);
@@ -287,57 +299,81 @@ public class Puzzle15 {
      */
     int solvePuzzle15() {
         // Move following tiles to final position
-        moveTileToPosition(1, getTileFinalPosition(1));
-        moveTileToPosition(2, getTileFinalPosition(2));
+        if (!tilesAtTheirFinalPosition.contains(1) || !tilesAtTheirFinalPosition.contains(2)) {
+            moveTileToPosition(1, getTileFinalPosition(1));
+            moveTileToPosition(2, getTileFinalPosition(2));
+        }
 
-        // Move following tiles to SETUP position
-        moveTileToPosition(3, getTileFinalPosition(5));
-        this.tilesToAvoid.remove(3);
-        moveTileToPosition(4, getTileFinalPosition(3));
-        moveTileToPosition(3, getTileFinalPosition(7));
 
-        // Move following tiles to final position
-        moveTileToPosition(4, getTileFinalPosition(4));
-        moveTileToPosition(3, getTileFinalPosition(3));
 
-        // Move following tiles to final position
-        moveTileToPosition(5, getTileFinalPosition(5));
-        moveTileToPosition(6, getTileFinalPosition(6));
 
-        // Move following tiles to SETUP position
-        moveTileToPosition(7, getTileFinalPosition(9));
-        this.tilesToAvoid.remove(7);
-        moveTileToPosition(8, getTileFinalPosition(7));
-        moveTileToPosition(7, getTileFinalPosition(11));
+        if (!tilesAtTheirFinalPosition.contains(3) || !tilesAtTheirFinalPosition.contains(4)) {
+            // Move following tiles to SETUP position
+            moveTileToPosition(3, getTileFinalPosition(5));
+            this.tilesAtTheirFinalPosition.remove(3);
+            moveTileToPosition(4, getTileFinalPosition(3));
+            moveTileToPosition(3, getTileFinalPosition(7));
 
-        // Move following tiles to final position
-        moveTileToPosition(8, getTileFinalPosition(8));
-        moveTileToPosition(7, getTileFinalPosition(7));
+            // Move following tiles to final position
+            moveTileToPosition(4, getTileFinalPosition(4));
+            moveTileToPosition(3, getTileFinalPosition(3));
+        }
 
-        // Move following tiles to SETUP position
-        moveTileToPosition(9, getTileFinalPosition(12));
-        this.tilesToAvoid.remove(9);
-        moveTileToPosition(13, getTileFinalPosition(9));
-        moveTileToPosition(9, getTileFinalPosition(10));
 
-        // Move following tiles to final position
-        moveTileToPosition(13, getTileFinalPosition(13));
-        moveTileToPosition(9, getTileFinalPosition(9));
+        if (!tilesAtTheirFinalPosition.contains(5) || !tilesAtTheirFinalPosition.contains(6)) {
+            // Move following tiles to final position
+            moveTileToPosition(5, getTileFinalPosition(5));
+            moveTileToPosition(6, getTileFinalPosition(6));
+        }
 
-        // Move following tiles to SETUP position
-        moveTileToPosition(10, getTileFinalPosition(12));
-        this.tilesToAvoid.remove(10);
-        moveTileToPosition(14, getTileFinalPosition(10));
-        moveTileToPosition(10, getTileFinalPosition(11));
 
-        // Move following tiles to final position
-        moveTileToPosition(14, getTileFinalPosition(14));
-        moveTileToPosition(10, getTileFinalPosition(10));
 
-        // Move following tiles to final position
-        moveTileToPosition(11, getTileFinalPosition(11));
-        moveTileToPosition(12, getTileFinalPosition(12));
-        moveTileToPosition(15, getTileFinalPosition(15));
+        if (!tilesAtTheirFinalPosition.contains(7) || !tilesAtTheirFinalPosition.contains(8)) {
+            // Move following tiles to SETUP position
+            moveTileToPosition(7, getTileFinalPosition(9));
+            this.tilesAtTheirFinalPosition.remove(7);
+            moveTileToPosition(8, getTileFinalPosition(7));
+            moveTileToPosition(7, getTileFinalPosition(11));
+
+            // Move following tiles to final position
+            moveTileToPosition(8, getTileFinalPosition(8));
+            moveTileToPosition(7, getTileFinalPosition(7));
+        }
+
+        if (!tilesAtTheirFinalPosition.contains(9) || !tilesAtTheirFinalPosition.contains(13)) {
+            // Move following tiles to SETUP position
+            moveTileToPosition(9, getTileFinalPosition(12));
+            this.tilesAtTheirFinalPosition.remove(9);
+            moveTileToPosition(13, getTileFinalPosition(9));
+            moveTileToPosition(9, getTileFinalPosition(10));
+
+            // Move following tiles to final position
+            moveTileToPosition(13, getTileFinalPosition(13));
+            moveTileToPosition(9, getTileFinalPosition(9));
+        }
+
+
+        if (!tilesAtTheirFinalPosition.contains(10) || !tilesAtTheirFinalPosition.contains(14)) {
+            // Move following tiles to SETUP position
+            moveTileToPosition(10, getTileFinalPosition(12));
+            this.tilesAtTheirFinalPosition.remove(10);
+            moveTileToPosition(14, getTileFinalPosition(10));
+            moveTileToPosition(10, getTileFinalPosition(11));
+
+            // Move following tiles to final position
+            moveTileToPosition(14, getTileFinalPosition(14));
+            moveTileToPosition(10, getTileFinalPosition(10));
+        }
+
+
+
+        if (!tilesAtTheirFinalPosition.contains(11) || !tilesAtTheirFinalPosition.contains(12) || !tilesAtTheirFinalPosition.contains(15)) {
+            // Move following tiles to final position
+            moveTileToPosition(11, getTileFinalPosition(11));
+            moveTileToPosition(12, getTileFinalPosition(12));
+            moveTileToPosition(15, getTileFinalPosition(15));
+        }
+
 
         return this.movesCounter;
     }
