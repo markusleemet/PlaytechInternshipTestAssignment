@@ -42,10 +42,10 @@ public class Puzzle15 {
 
 
     /**
-     * Method swaps empty tile with bottom or right tile to find valid path.
+     * Method swaps empty tile with one of the adjacent tiles.
      * It doest swap with tiles that are already in their final position.
      */
-    void moveEmptyTileRandomly() {
+    void moveEmptyTileSoThatPathCanBeGenerated() {
         TilePosition moveDown = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition + 1);
         TilePosition moveRight = new TilePosition(this.emptyTilePosition.xPosition + 1, this.emptyTilePosition.yPosition);
         TilePosition moveLeft = new TilePosition(this.emptyTilePosition.xPosition - 1, this.emptyTilePosition.yPosition);
@@ -128,7 +128,7 @@ public class Puzzle15 {
 
         // If no valid path was generated, move randomly and try again
         while (path == null) {
-            moveEmptyTileRandomly();
+            moveEmptyTileSoThatPathCanBeGenerated();
             path = calculatePathForTile(this.emptyTilePosition, targetPosition);
         }
 
