@@ -8,7 +8,7 @@ public class Puzzle15 {
     private List<List<Integer>> puzzleGameBoard;
     private TilePosition emptyTilePosition;
     private int movesCounter = 0;
-    private boolean solveWithAdditionalOutput = false;
+    private final boolean solveWithAdditionalOutput = false;
     private Set<Integer> tilesAtTheirFinalPosition = new HashSet<>();
 
 
@@ -24,8 +24,7 @@ public class Puzzle15 {
         this.emptyTilePosition = locateTilePosition(0);
         checkIfPuzzleIsSolvable();
 
-        // Add tiles that are already at their final position to tilesToAvoid.
-        // Starting from top left corner To this until first tile that is out of place.
+        // Add tiles that are already at their final position and don't need moving to class variable
         for (int i = 1; i <= 15; i++) {
             TilePosition tilePosition = locateTilePosition(i);
             TilePosition tileFinalPosition = getTileFinalPosition(i);
@@ -45,24 +44,26 @@ public class Puzzle15 {
     void moveEmptyTileRandomly() {
         List<TilePosition> possibleMoves = new ArrayList<>();
 
-        TilePosition moveUp = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition - 1);
         TilePosition moveDown = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition + 1);
         TilePosition moveLeft = new TilePosition(this.emptyTilePosition.xPosition - 1, this.emptyTilePosition.yPosition);
+        TilePosition moveUp = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition - 1);
         TilePosition moveRight = new TilePosition(this.emptyTilePosition.xPosition + 1, this.emptyTilePosition.yPosition);
-        List<TilePosition> allMoves = new ArrayList<>(Arrays.asList(moveUp, moveDown, moveLeft, moveRight));
+
+        List<TilePosition> allMoves = new ArrayList<>(Arrays.asList(moveDown, moveRight));
 
         for (TilePosition move : allMoves) {
             if (move.xPosition >= 0 && move.xPosition <= 3) {
                 if (move.yPosition >= 0 && move.yPosition <= 3) {
                     int moveValue = this.puzzleGameBoard.get(move.yPosition).get(move.xPosition);
                     if (!tilesAtTheirFinalPosition.contains(moveValue)) {
-                        possibleMoves.add(move);
+                        swapEmptyTileWith(move);
+                        return;
                     }
                 }
             }
         }
-
-        swapEmptyTileWith(possibleMoves.get(new Random().nextInt(possibleMoves.size())));
+        // If empty tile has no valid moves throw RuntimeException
+        throw new RuntimeException();
     }
 
 
@@ -81,6 +82,27 @@ public class Puzzle15 {
 
         if (solveWithAdditionalOutput) {
             printOutCurrentState();
+        }
+    }
+
+
+    /**
+     * Method moves empty tile to specified position.
+     *
+     * @param targetPosition position where to move empty tile.
+     */
+    void moveEmptyTileToPosition(TilePosition targetPosition) {
+        List<TilePosition> path = calculatePathForTile(this.emptyTilePosition, targetPosition);
+
+        // If no valid path was generated, move randomly and try again
+        while (path == null) {
+            moveEmptyTileRandomly();
+            path = calculatePathForTile(this.emptyTilePosition, targetPosition);
+        }
+
+        // Execute generated path
+        for (TilePosition step : path) {
+            swapEmptyTileWith(step);
         }
     }
 
@@ -155,27 +177,6 @@ public class Puzzle15 {
             moveEmptyTileToPosition(step);
             swapEmptyTileWith(tileCurrentPosition);
             tileCurrentPosition = step;
-        }
-    }
-
-
-    /**
-     * Method moves empty tile to specified position.
-     *
-     * @param targetPosition position where to move empty tile.
-     */
-    void moveEmptyTileToPosition(TilePosition targetPosition) {
-        List<TilePosition> path = calculatePathForTile(this.emptyTilePosition, targetPosition);
-
-        // If no valid path was generated, move randomly and try again
-        while (path == null) {
-            moveEmptyTileRandomly();
-            path = calculatePathForTile(this.emptyTilePosition, targetPosition);
-        }
-
-        // Execute generated path
-        for (TilePosition step : path) {
-            swapEmptyTileWith(step);
         }
     }
 
