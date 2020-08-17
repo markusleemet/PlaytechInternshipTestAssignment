@@ -1,4 +1,5 @@
 package cs.ut;
+
 import cs.ut.exceptions.ImpossiblePuzzleSetupException;
 import cs.ut.exceptions.InvalidPuzzleInputException;
 import org.junit.jupiter.api.Assertions;
@@ -25,7 +26,9 @@ public class Puzzle15Test {
         matrix.add(new ArrayList<>(Arrays.asList(13, 14, 12, 15)));
 
         Assertions.assertThrows(ImpossiblePuzzleSetupException.class,
-                () -> {new Puzzle15(matrix);});
+                () -> {
+                    new Puzzle15(matrix);
+                });
     }
 
 
@@ -37,12 +40,15 @@ public class Puzzle15Test {
         File fileWithIncorrectSyntax = new File("assignment files/invalidSyntax.p15");
 
         Assertions.assertThrows(InvalidPuzzleInputException.class,
-                () -> {Main.createMatrixFromFile(fileWithIncorrectSyntax);});
+                () -> {
+                    Main.createMatrixFromFile(fileWithIncorrectSyntax);
+                });
     }
 
 
     /**
      * Assert that solving puzzle returns positive integer or 0.
+     *
      * @throws FileNotFoundException
      */
     @Test
@@ -60,6 +66,7 @@ public class Puzzle15Test {
 
     /**
      * Assert that solving completed puzzle takes 0 turns.
+     *
      * @throws FileNotFoundException
      */
     @Test
@@ -74,4 +81,22 @@ public class Puzzle15Test {
         Assertions.assertTrue(turnsToSolvePuzzle == 0);
     }
 
+
+    /**
+     * Test shows that puzzle remains solvable even after 10000 solves and shuffles.
+     *
+     * @throws FileNotFoundException
+     */
+    @Test
+    void testThatPuzzleRemainSolvable() throws FileNotFoundException {
+        File completedPuzzle = new File("assignment files/hard.p15");
+
+        List<List<Integer>> matrix = Main.createMatrixFromFile(completedPuzzle);
+        Puzzle15 puzzle15 = new Puzzle15(matrix);
+
+        for (int i = 0; i < 10000; i++) {
+            int turns = puzzle15.solvePuzzle15();
+            puzzle15.shuffleGameBoard();
+        }
+    }
 }

@@ -5,12 +5,16 @@ import cs.ut.exceptions.ImpossiblePuzzleSetupException;
 import java.util.*;
 
 public class Puzzle15 {
-    private List<List<Integer>> puzzleGameBoard;
+    List<List<Integer>> puzzleGameBoard;
     private TilePosition emptyTilePosition;
     private int movesCounter = 0;
     private final boolean solveWithAdditionalOutput = false;
     private Set<Integer> tilesAtTheirFinalPosition = new HashSet<>();
 
+
+    public List<List<Integer>> getPuzzleGameBoard() {
+        return puzzleGameBoard;
+    }
 
     /**
      * At the creation of the puzzle instance two actions must be done:
@@ -38,18 +42,16 @@ public class Puzzle15 {
 
 
     /**
-     * Method swaps empty tile with random adjacent tile.
+     * Method swaps empty tile with bottom or right tile to find valid path.
      * It doest swap with tiles that are already in their final position.
      */
     void moveEmptyTileRandomly() {
-        List<TilePosition> possibleMoves = new ArrayList<>();
-
         TilePosition moveDown = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition + 1);
+        TilePosition moveRight = new TilePosition(this.emptyTilePosition.xPosition + 1, this.emptyTilePosition.yPosition);
         TilePosition moveLeft = new TilePosition(this.emptyTilePosition.xPosition - 1, this.emptyTilePosition.yPosition);
         TilePosition moveUp = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition - 1);
-        TilePosition moveRight = new TilePosition(this.emptyTilePosition.xPosition + 1, this.emptyTilePosition.yPosition);
 
-        List<TilePosition> allMoves = new ArrayList<>(Arrays.asList(moveDown, moveRight));
+        List<TilePosition> allMoves = new ArrayList<>(Arrays.asList(moveDown, moveRight, moveLeft, moveUp));
 
         for (TilePosition move : allMoves) {
             if (move.xPosition >= 0 && move.xPosition <= 3) {
@@ -62,8 +64,38 @@ public class Puzzle15 {
                 }
             }
         }
+
         // If empty tile has no valid moves throw RuntimeException
         throw new RuntimeException();
+    }
+
+
+    /**
+     * Method to shuffle game board. Not need for solving puzzle.
+     */
+    void shuffleGameBoard(){
+        tilesAtTheirFinalPosition.clear();
+
+        for (int i = 0; i < 1000; i++) {
+
+            TilePosition moveDown = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition + 1);
+            TilePosition moveRight = new TilePosition(this.emptyTilePosition.xPosition + 1, this.emptyTilePosition.yPosition);
+            TilePosition moveUp = new TilePosition(this.emptyTilePosition.xPosition, this.emptyTilePosition.yPosition - 1);
+            TilePosition moveLeft = new TilePosition(this.emptyTilePosition.xPosition - 1, this.emptyTilePosition.yPosition);
+
+            List<TilePosition> allMoves = new ArrayList<>(Arrays.asList(moveDown, moveUp, moveLeft, moveRight));
+            List<TilePosition> validMoves = new ArrayList<>();
+
+            for (TilePosition move : allMoves) {
+                if (move.xPosition >= 0 && move.xPosition <= 3) {
+                    if (move.yPosition >= 0 && move.yPosition <= 3) {
+                        validMoves.add(move);
+                    }
+                }
+            }
+            swapEmptyTileWith(validMoves.get(new Random().nextInt(validMoves.size())));
+        }
+        movesCounter = 0;
     }
 
 
