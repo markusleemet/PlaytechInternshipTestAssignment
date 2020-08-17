@@ -1,6 +1,6 @@
 package cs.ut;
 
-import cs.ut.exception.ImpossiblePuzzleSetupException;
+import cs.ut.exceptions.ImpossiblePuzzleSetupException;
 
 import java.util.*;
 
@@ -298,82 +298,64 @@ public class Puzzle15 {
      * @return number of turns it took to solve the puzzle
      */
     int solvePuzzle15() {
-        // Move following tiles to final position
+        // Move following tiles to final position if not there yet
         if (!tilesAtTheirFinalPosition.contains(1) || !tilesAtTheirFinalPosition.contains(2)) {
             moveTileToPosition(1, getTileFinalPosition(1));
             moveTileToPosition(2, getTileFinalPosition(2));
         }
 
-
-
-
+        // Move following tiles to SETUP position and then to FINAL position if not there yet
         if (!tilesAtTheirFinalPosition.contains(3) || !tilesAtTheirFinalPosition.contains(4)) {
-            // Move following tiles to SETUP position
             moveTileToPosition(3, getTileFinalPosition(5));
             this.tilesAtTheirFinalPosition.remove(3);
             moveTileToPosition(4, getTileFinalPosition(3));
             moveTileToPosition(3, getTileFinalPosition(7));
-
-            // Move following tiles to final position
             moveTileToPosition(4, getTileFinalPosition(4));
             moveTileToPosition(3, getTileFinalPosition(3));
         }
 
-
+        // Move following tiles to final position if not there yet
         if (!tilesAtTheirFinalPosition.contains(5) || !tilesAtTheirFinalPosition.contains(6)) {
-            // Move following tiles to final position
             moveTileToPosition(5, getTileFinalPosition(5));
             moveTileToPosition(6, getTileFinalPosition(6));
         }
 
-
-
+        // Move following tiles to SETUP position and then to FINAL position if not there yet
         if (!tilesAtTheirFinalPosition.contains(7) || !tilesAtTheirFinalPosition.contains(8)) {
-            // Move following tiles to SETUP position
             moveTileToPosition(7, getTileFinalPosition(9));
             this.tilesAtTheirFinalPosition.remove(7);
             moveTileToPosition(8, getTileFinalPosition(7));
             moveTileToPosition(7, getTileFinalPosition(11));
-
-            // Move following tiles to final position
             moveTileToPosition(8, getTileFinalPosition(8));
             moveTileToPosition(7, getTileFinalPosition(7));
         }
 
+        // Move following tiles to SETUP position and then to FINAL position if not there yet
         if (!tilesAtTheirFinalPosition.contains(9) || !tilesAtTheirFinalPosition.contains(13)) {
-            // Move following tiles to SETUP position
             moveTileToPosition(9, getTileFinalPosition(12));
             this.tilesAtTheirFinalPosition.remove(9);
             moveTileToPosition(13, getTileFinalPosition(9));
             moveTileToPosition(9, getTileFinalPosition(10));
-
-            // Move following tiles to final position
             moveTileToPosition(13, getTileFinalPosition(13));
             moveTileToPosition(9, getTileFinalPosition(9));
         }
 
-
+        // Move following tiles to SETUP position and then to FINAL position if not there yet
         if (!tilesAtTheirFinalPosition.contains(10) || !tilesAtTheirFinalPosition.contains(14)) {
-            // Move following tiles to SETUP position
             moveTileToPosition(10, getTileFinalPosition(12));
             this.tilesAtTheirFinalPosition.remove(10);
             moveTileToPosition(14, getTileFinalPosition(10));
             moveTileToPosition(10, getTileFinalPosition(11));
-
-            // Move following tiles to final position
             moveTileToPosition(14, getTileFinalPosition(14));
             moveTileToPosition(10, getTileFinalPosition(10));
         }
 
-
-
+        // Move following tiles to final position if not there yet
         if (!tilesAtTheirFinalPosition.contains(11) || !tilesAtTheirFinalPosition.contains(12) || !tilesAtTheirFinalPosition.contains(15)) {
-            // Move following tiles to final position
             moveTileToPosition(11, getTileFinalPosition(11));
             moveTileToPosition(12, getTileFinalPosition(12));
             moveTileToPosition(15, getTileFinalPosition(15));
         }
-
 
         return this.movesCounter;
     }

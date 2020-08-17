@@ -1,3 +1,3 @@
-package cs.ut.exception;
+package cs.ut.exceptions;
 
 public class InvalidPuzzleInputException extends RuntimeException{ }

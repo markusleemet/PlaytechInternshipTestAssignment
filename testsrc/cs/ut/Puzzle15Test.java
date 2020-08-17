@@ -1,6 +1,6 @@
 package cs.ut;
-import cs.ut.exception.ImpossiblePuzzleSetupException;
-import cs.ut.exception.InvalidPuzzleInputException;
+import cs.ut.exceptions.ImpossiblePuzzleSetupException;
+import cs.ut.exceptions.InvalidPuzzleInputException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

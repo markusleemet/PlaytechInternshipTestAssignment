@@ -1,7 +1,7 @@
 package cs.ut;
 
-import cs.ut.exception.ImpossiblePuzzleSetupException;
-import cs.ut.exception.InvalidPuzzleInputException;
+import cs.ut.exceptions.ImpossiblePuzzleSetupException;
+import cs.ut.exceptions.InvalidPuzzleInputException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
